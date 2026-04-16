@@ -17,6 +17,16 @@ const CANVAS_WIDTH = 1320;
 const CANVAS_HEIGHT = 860;
 const PADDING = 36;
 const GAP = 14;
+const TAB_JOB_LIMIT = 18;
+const CURATED_ALL_CATEGORY_ORDER: Job["category"][] = [
+  "tech",
+  "sales_marketing",
+  "healthcare",
+  "design",
+  "finance_admin",
+  "industry",
+  "service",
+];
 
 function getRadius(size: Job["size"]) {
   if (size === "xs") return 54;
@@ -230,7 +240,15 @@ function buildPackedCluster(jobs: Job[]): BubbleNode[] {
 
   separateAll(placed);
 
-  return placed;
+  const nonOverlapping: BubbleNode[] = [];
+
+  for (const node of placed) {
+    if (!overlaps(node.px, node.py, node.radius, nonOverlapping)) {
+      nonOverlapping.push(node);
+    }
+  }
+
+  return nonOverlapping;
 }
 
 function hashString(value: string) {
@@ -292,7 +310,7 @@ function normalizeJobsForCanvas(jobs: Job[], seedKey: string): Job[] {
 
   const shuffledSizes = shuffleArray(sizePool, random);
 
-  return jobs.slice(0, 18).map((job, index) => {
+  return jobs.slice(0, TAB_JOB_LIMIT).map((job, index) => {
     const spreadX = 14 + Math.floor(random() * 72);
     const spreadY = 14 + Math.floor(random() * 62);
 
@@ -303,6 +321,30 @@ function normalizeJobsForCanvas(jobs: Job[], seedKey: string): Job[] {
       y: spreadY,
     };
   });
+}
+
+function getCuratedAllCategoryJobs(jobs: Job[]) {
+  const popularJobs = jobs.filter((job) => job.isPopular);
+  const selectedJobIds = new Set<string>();
+  const curated: Job[] = [];
+
+  for (const category of CURATED_ALL_CATEGORY_ORDER) {
+    const categoryPicks = popularJobs
+      .filter((job) => job.category === category)
+      .slice(0, 2);
+
+    for (const job of categoryPicks) {
+      selectedJobIds.add(job.id);
+      curated.push(job);
+    }
+  }
+
+  if (curated.length < TAB_JOB_LIMIT) {
+    const remainingPopular = popularJobs.filter((job) => !selectedJobIds.has(job.id));
+    curated.push(...remainingPopular.slice(0, TAB_JOB_LIMIT - curated.length));
+  }
+
+  return curated.slice(0, TAB_JOB_LIMIT);
 }
 
 export function BubbleCanvas() {
@@ -317,13 +359,13 @@ export function BubbleCanvas() {
     if (activeTab === "for_you") {
       jobs = [...mockJobs]
         .sort((a, b) => getMatchScore(b) - getMatchScore(a))
-        .slice(0, 18);
+        .slice(0, TAB_JOB_LIMIT);
     } else if (activeTab === "all") {
-      jobs = mockJobs.filter((job) => job.isPopular).slice(0, 18);
+      jobs = getCuratedAllCategoryJobs(mockJobs);
     } else {
       jobs = mockJobs
         .filter((job) => job.category === activeTab)
-        .slice(0, 18);
+        .slice(0, TAB_JOB_LIMIT);
     }
 
     if (searchQuery.trim()) {
