@@ -6,11 +6,14 @@ import { mockUser } from "@/lib/mock-user";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
 import { ProfileBubble } from "./profile-bubble";
+import { JobDetailModal } from "./job-detail-modal";
 import { Job } from "@/types/job";
 
 type MatchBubbleNode = Job & {
   px: number;
   py: number;
+  spawnX: number;
+  spawnY: number;
   radius: number;
   matchScore: number;
 };
@@ -70,10 +73,8 @@ function insideBounds(x: number, y: number, radius: number) {
 }
 
 function getDistanceFromMatch(matchScore: number) {
-  if (matchScore >= 80) return 220;
-  if (matchScore >= 60) return 300;
-  if (matchScore >= 40) return 380;
-  return 470;
+  const normalized = 1 - Math.max(0, Math.min(matchScore, 100)) / 100;
+  return 190 + normalized * 320;
 }
 
 function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
@@ -112,6 +113,8 @@ function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
           radius,
           px: x,
           py: y,
+          spawnX: CENTER_X + Math.cos(angle) * (ringDistance + 220),
+          spawnY: CENTER_Y + Math.sin(angle) * (ringDistance + 220),
         };
         break;
       }
@@ -134,6 +137,8 @@ function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
           CANVAS_HEIGHT - radius - PADDING
         ),
         matchScore: job.matchScore,
+        spawnX: CENTER_X + (index - 9) * 60,
+        spawnY: CENTER_Y + 560,
       };
     }
 
@@ -153,9 +158,13 @@ export function ForYouCanvas() {
   }, []);
 
   const nodes = useMemo(() => buildForYouLayout(jobs), [jobs]);
+  const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
     <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
+      <p className="mb-2 px-2 text-xs text-slate-500">
+        Higher matching score bubbles are pulled closer to your profile.
+      </p>
       <div className="overflow-x-auto">
         <div
           className="relative mx-auto overflow-hidden rounded-[28px]"
@@ -177,10 +186,31 @@ export function ForYouCanvas() {
                 left: job.px,
                 top: job.py,
               }}
+              initialStyle={{
+                left: job.spawnX,
+                top: job.spawnY,
+                opacity: 0,
+              }}
+              animateStyle={{
+                left: job.px,
+                top: job.py,
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.55 + (100 - job.matchScore) / 120,
+                delay: (100 - job.matchScore) / 500,
+                ease: "easeOut",
+              }}
             />
           ))}
         </div>
       </div>
+
+      <JobDetailModal
+        job={selectedJob}
+        open={Boolean(selectedJob)}
+        onClose={() => setSelectedJobId(null)}
+      />
     </div>
   );
 }
