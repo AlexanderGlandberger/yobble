@@ -6,6 +6,7 @@ import { mockUser } from "@/lib/mock-user";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
 import { ProfileBubble } from "./profile-bubble";
+import { JobDetailModal } from "./job-detail-modal";
 import { Job } from "@/types/job";
 
 type MatchBubbleNode = Job & {
@@ -153,6 +154,7 @@ export function ForYouCanvas() {
   }, []);
 
   const nodes = useMemo(() => buildForYouLayout(jobs), [jobs]);
+  const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
     <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
@@ -181,6 +183,12 @@ export function ForYouCanvas() {
           ))}
         </div>
       </div>
+
+      <JobDetailModal
+        job={selectedJob}
+        open={Boolean(selectedJob)}
+        onClose={() => setSelectedJobId(null)}
+      />
     </div>
   );
 }

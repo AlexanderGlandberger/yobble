@@ -180,17 +180,41 @@ const sizePattern: Job["size"][] = [
   "md",
 ];
 
+const matchingSkillPool = [
+  "Communication",
+  "Problem solving",
+  "Team collaboration",
+  "Customer focus",
+  "Planning",
+  "Quality mindset",
+];
+
+const missingSkillPool = [
+  "Leadership",
+  "Advanced analytics",
+  "SQL",
+  "System design",
+  "Process improvement",
+  "AI workflows",
+];
+
 export const mockJobs: Job[] = Object.entries(categoryData).flatMap(
   ([category, jobs]) =>
   jobs.map(([title, company, location], index) => ({
-  id: `${category}-${index + 1}`,
-  title,
-  company,
-  location,
-  category: category as JobCategory,
-  size: sizePattern[index],
-  x: 18 + ((index * 17) % 64),
-  y: 18 + ((index * 13) % 58),
-  isPopular: index < 3,
-})),
+    id: `${category}-${index + 1}`,
+    title,
+    company,
+    location,
+    shortDescription: `${title} at ${company}. Help deliver clear impact for teams and customers in ${location}.`,
+    matchScore: 58 + ((index * 9) % 39),
+    popularityScore: 45 + ((index * 7) % 51),
+    status: index % 11 === 0 ? "Closing soon" : index % 13 === 0 ? "Paused" : "Open",
+    matchingSkills: matchingSkillPool.slice(0, 2 + (index % 2)),
+    missingSkills: missingSkillPool.slice(index % 3, index % 3 + 2),
+    category: category as JobCategory,
+    size: sizePattern[index],
+    x: 18 + ((index * 17) % 64),
+    y: 18 + ((index * 13) % 58),
+    isPopular: index < 3,
+  })),
 );
