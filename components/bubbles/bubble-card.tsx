@@ -18,6 +18,13 @@ type BubbleCardProps = {
   isSelected?: boolean;
   onClick?: () => void;
   style?: React.CSSProperties;
+  initialStyle?: React.CSSProperties;
+  animateStyle?: React.CSSProperties;
+  transition?: {
+    duration?: number;
+    delay?: number;
+    ease?: "linear" | "easeIn" | "easeOut" | "easeInOut";
+  };
 };
 
 function renderBubbleContent(job: Job) {
@@ -68,9 +75,18 @@ export function BubbleCard({
   isSelected = false,
   onClick,
   style,
+  initialStyle,
+  animateStyle,
+  transition,
 }: BubbleCardProps) {
   return (
-    <div className="absolute" style={style}>
+    <motion.div
+      className="absolute"
+      style={style}
+      initial={initialStyle}
+      animate={animateStyle}
+      transition={transition}
+    >
       <motion.button
         whileHover={{ scale: 1 }}
         whileTap={{ scale: 0.985 }}
@@ -86,6 +102,6 @@ export function BubbleCard({
       >
         {renderBubbleContent(job)}
       </motion.button>
-    </div>
+    </motion.div>
   );
 }
