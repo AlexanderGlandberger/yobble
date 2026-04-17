@@ -198,6 +198,79 @@ const missingSkillPool = [
   "AI workflows",
 ];
 
+const cityCoordinates: Record<string, { lat: number; lng: number }> = {
+  Stockholm: { lat: 59.3293, lng: 18.0686 },
+  Göteborg: { lat: 57.7089, lng: 11.9746 },
+  Malmö: { lat: 55.60498, lng: 13.0038 },
+  Uppsala: { lat: 59.8586, lng: 17.6389 },
+  Lund: { lat: 55.7047, lng: 13.191 },
+  Västerås: { lat: 59.6099, lng: 16.5448 },
+  Helsingborg: { lat: 56.0465, lng: 12.6945 },
+  Örebro: { lat: 59.2753, lng: 15.2134 },
+  Borås: { lat: 57.721, lng: 12.94 },
+  Norrköping: { lat: 58.5877, lng: 16.1924 },
+  Södertälje: { lat: 59.1955, lng: 17.6252 },
+  Karlshamn: { lat: 56.1702, lng: 14.8631 },
+  Skellefteå: { lat: 64.7502, lng: 20.9509 },
+  Linköping: { lat: 58.4108, lng: 15.6214 },
+  Jönköping: { lat: 57.7826, lng: 14.1618 },
+  Karlskrona: { lat: 56.1612, lng: 15.5869 },
+  Halmstad: { lat: 56.6745, lng: 12.8578 },
+  Växjö: { lat: 56.879, lng: 14.8059 },
+  Gävle: { lat: 60.6749, lng: 17.1413 },
+  Luleå: { lat: 65.5848, lng: 22.1547 },
+  Älmhult: { lat: 56.5515, lng: 14.1381 },
+  Ängelholm: { lat: 56.2428, lng: 12.8627 },
+  Morgongåva: { lat: 59.9345, lng: 16.9628 },
+  Remote: { lat: 59.3293, lng: 18.0686 },
+};
+
+function hashSeed(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function withJitter(base: { lat: number; lng: number }, seed: string) {
+  const hashed = hashSeed(seed);
+  const latJitter = ((hashed % 17) - 8) * 0.006;
+  const lngJitter = ((Math.floor(hashed / 17) % 17) - 8) * 0.006;
+
+  return {
+    lat: Number((base.lat + latJitter).toFixed(6)),
+    lng: Number((base.lng + lngJitter).toFixed(6)),
+  };
+}
+
+export const mockJobs: Job[] = Object.entries(categoryData).flatMap(
+  ([category, jobs]) =>
+  jobs.map(([title, company, location], index) => {
+    const baseCoordinates = cityCoordinates[location] ?? cityCoordinates.Stockholm;
+    const coordinates = withJitter(baseCoordinates, `${category}-${company}-${title}`);
+
+    return {
+      id: `${category}-${index + 1}`,
+      title,
+      company,
+      location,
+      companyAddress: `${company}, ${location}, Sweden`,
+      coordinates,
+      shortDescription: `${title} at ${company}. Help deliver clear impact for teams and customers in ${location}.`,
+      matchScore: 58 + ((index * 9) % 39),
+      popularityScore: 45 + ((index * 7) % 51),
+      status: index % 11 === 0 ? "Closing soon" : index % 13 === 0 ? "Paused" : "Open",
+      matchingSkills: matchingSkillPool.slice(0, 2 + (index % 2)),
+      missingSkills: missingSkillPool.slice(index % 3, index % 3 + 2),
+      category: category as JobCategory,
+      size: sizePattern[index],
+      x: 18 + ((index * 17) % 64),
+      y: 18 + ((index * 13) % 58),
+      isPopular: index < 3,
+    };
+  }),
 export const mockJobs: Job[] = Object.entries(categoryData).flatMap(
   ([category, jobs]) =>
   jobs.map(([title, company, location], index) => ({
