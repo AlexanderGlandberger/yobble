@@ -45,6 +45,12 @@ function overlapsProfile(x: number, y: number, radius: number) {
   return dist < PROFILE_RADIUS + radius + GAP;
 }
 
+function profileDistance(x: number, y: number) {
+  const dx = x - CENTER_X;
+  const dy = y - CENTER_Y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 function overlapsPlaced(
   x: number,
   y: number,
@@ -72,9 +78,77 @@ function insideBounds(x: number, y: number, radius: number) {
   );
 }
 
-function getDistanceFromMatch(matchScore: number) {
+function getDistanceFromMatch(matchScore: number, radius: number) {
+  if (matchScore >= 85) {
+    return PROFILE_RADIUS + radius + 26 + (100 - matchScore) * 2.2;
+  }
+
   const normalized = 1 - Math.max(0, Math.min(matchScore, 100)) / 100;
-  return 190 + normalized * 320;
+  return PROFILE_RADIUS + radius + 90 + normalized * 290;
+}
+
+function separateAll(nodes: MatchBubbleNode[]) {
+  for (let iteration = 0; iteration < 420; iteration++) {
+    let moved = false;
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+        let dx = b.px - a.px;
+        let dy = b.py - a.py;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist === 0) {
+          dx = 1;
+          dy = 0;
+          dist = 1;
+        }
+
+        const minDist = a.radius + b.radius + GAP;
+        if (dist >= minDist) continue;
+
+        const overlap = minDist - dist;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const push = overlap / 2;
+
+        a.px -= nx * push;
+        a.py -= ny * push;
+        b.px += nx * push;
+        b.py += ny * push;
+        moved = true;
+      }
+    }
+
+    for (const node of nodes) {
+      const dist = profileDistance(node.px, node.py);
+      const minDist = PROFILE_RADIUS + node.radius + GAP;
+
+      if (dist < minDist) {
+        const push = minDist - dist;
+        const nx = dist === 0 ? 1 : (node.px - CENTER_X) / dist;
+        const ny = dist === 0 ? 0 : (node.py - CENTER_Y) / dist;
+
+        node.px += nx * push;
+        node.py += ny * push;
+        moved = true;
+      }
+
+      node.px = clamp(
+        node.px,
+        node.radius + PADDING,
+        CANVAS_WIDTH - node.radius - PADDING
+      );
+      node.py = clamp(
+        node.py,
+        node.radius + PADDING,
+        CANVAS_HEIGHT - node.radius - PADDING
+      );
+    }
+
+    if (!moved) break;
+  }
 }
 
 function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
@@ -90,13 +164,13 @@ function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
 
   scored.forEach((job, index) => {
     const radius = getRadius(job.size);
-    const baseDistance = getDistanceFromMatch(job.matchScore);
+    const baseDistance = getDistanceFromMatch(job.matchScore, radius);
     const angleSeed = (index / Math.max(scored.length, 1)) * Math.PI * 2;
 
     let found: MatchBubbleNode | null = null;
 
-    for (let ring = 0; ring < 120; ring++) {
-      const ringDistance = baseDistance + ring * 10;
+    for (let ring = 0; ring < 180; ring++) {
+      const ringDistance = baseDistance + ring * 9;
       const steps = 36 + ring * 2;
 
       for (let step = 0; step < steps; step++) {
@@ -145,7 +219,17 @@ function buildForYouLayout(jobs: Job[]): MatchBubbleNode[] {
     placed.push(found);
   });
 
-  return placed;
+  separateAll(placed);
+
+  const nonOverlapping: MatchBubbleNode[] = [];
+
+  for (const node of placed) {
+    if (overlapsPlaced(node.px, node.py, node.radius, nonOverlapping)) continue;
+    if (overlapsProfile(node.px, node.py, node.radius)) continue;
+    nonOverlapping.push(node);
+  }
+
+  return nonOverlapping;
 }
 
 export function ForYouCanvas() {
@@ -163,7 +247,7 @@ export function ForYouCanvas() {
   return (
     <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
       <p className="mb-2 px-2 text-xs text-slate-500">
-        Higher matching score bubbles are pulled closer to your profile.
+        Jobs with 85%+ match are magnetized closest to your profile bubble.
       </p>
       <div className="overflow-x-auto">
         <div
