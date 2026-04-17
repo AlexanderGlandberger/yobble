@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { mockJobs } from "@/lib/mock-jobs";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
 import { CategoryTabs } from "./category-tabs";
+import { JobDetailModal } from "./job-detail-modal";
 import { Job, CategoryTab } from "@/types/job";
 
 type BubbleNode = Job & {
@@ -390,11 +391,8 @@ export function BubbleCanvas() {
     );
   }, [activeTab, searchQuery, cityQuery]);
 
-  useEffect(() => {
-    setSelectedJobId(null);
-  }, [activeTab, searchQuery, cityQuery]);
-
   const nodes = useMemo(() => buildPackedCluster(filteredJobs), [filteredJobs]);
+  const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
     <div className="space-y-4">
@@ -441,6 +439,12 @@ export function BubbleCanvas() {
           </div>
         </div>
       </div>
+
+      <JobDetailModal
+        job={selectedJob}
+        open={Boolean(selectedJob)}
+        onClose={() => setSelectedJobId(null)}
+      />
     </div>
   );
 }
