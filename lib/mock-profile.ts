@@ -1,0 +1,88 @@
+export const mockProfile = {
+  name: "Emma Larsson",
+  title: "Frontendutvecklare / Digital kreatör",
+  location: "Göteborg",
+  bio: "Jag gillar att bygga digitala upplevelser som känns enkla, snabba och visuellt tydliga. Intresserad av frontend, design och produktutveckling.",
+  skills: [
+    "React",
+    "JavaScript",
+    "TypeScript",
+    "Kommunikation",
+    "Kundkontakt",
+    "Teamarbete",
+    "Sales",
+    "CRM",
+    "Projektledning",
+    "Support",
+    "Figma",
+    "SQL",
+  ],
+  coverLetterDraft:
+    "Hej! Jag söker rollen eftersom jag gillar att bygga användarvänliga produkter och tror att jag kan bidra med både teknik och produktkänsla.",
+};
+
+export const mockApplications = [
+  {
+    id: "app-1",
+    title: "Frontend Developer",
+    company: "Spotify",
+    status: "Ansökt",
+    date: "2026-04-01",
+  },
+  {
+    id: "app-2",
+    title: "React Developer",
+    company: "Klarna",
+    status: "Ansökt",
+    date: "2026-03-30",
+  },
+  {
+    id: "app-3",
+    title: "UI Developer",
+    company: "Acast",
+    status: "Ansökt",
+    date: "2026-03-25",
+  },
+  {
+    id: "app-4",
+    title: "UX Designer",
+    company: "Volvo Cars",
+    status: "Intervju",
+    date: "2026-03-28",
+  },
+  {
+    id: "app-5",
+    title: "Product Designer",
+    company: "Figma",
+    status: "Intervju",
+    date: "2026-03-20",
+  },
+  {
+    id: "app-6",
+    title: "Service Designer",
+    company: "Doberman",
+    status: "Intervju",
+    date: "2026-03-15",
+  },
+  {
+    id: "app-7",
+    title: "Marketing Specialist",
+    company: "NA-KD",
+    status: "Sparad",
+    date: "2026-03-22",
+  },
+  {
+    id: "app-8",
+    title: "Sales Manager",
+    company: "Schibsted",
+    status: "Sparad",
+    date: "2026-03-14",
+  },
+  {
+    id: "app-9",
+    title: "Partnership Manager",
+    company: "Bolt",
+    status: "Sparad",
+    date: "2026-03-10",
+  },
+];

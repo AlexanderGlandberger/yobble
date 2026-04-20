@@ -17,6 +17,17 @@ export type Job = {
   company: string;
   category: JobCategory;
   location: string;
+  shortDescription: string;
+  matchScore: number;
+  popularityScore: number;
+  status: "Open" | "Closing soon" | "Paused";
+  matchingSkills: string[];
+  missingSkills: string[];
+  companyAddress?: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
   size: BubbleSize;
   x: number;
   y: number;
