@@ -28,7 +28,10 @@ function haversineKm(a: Coordinates, b: Coordinates) {
 }
 
 function buildGoogleEmbedUrl(selected: Job, userLocation: Coordinates | null) {
-  const destination = encodeURIComponent(selected.companyAddress ?? `${selected.company}, ${selected.location}`);
+  const destination = encodeURIComponent(
+    selected.companyAddress ?? `${selected.company}, ${selected.location}`
+  );
+
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   if (apiKey && userLocation) {
@@ -40,7 +43,9 @@ function buildGoogleEmbedUrl(selected: Job, userLocation: Coordinates | null) {
 
 export function NearbyMap() {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
-  const [locationState, setLocationState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [locationState, setLocationState] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
 
   const jobsWithDistance = useMemo(() => {
     if (!userLocation) return [];
@@ -54,9 +59,11 @@ export function NearbyMap() {
       .sort((a, b) => a.distanceKm - b.distanceKm);
   }, [userLocation]);
 
-  const nearbyJobs = jobsWithDistance.filter((job) => job.distanceKm <= 60).slice(0, 12);
-  const selectedJob = nearbyJobs[0] ?? jobsWithDistance[0] ?? null;
+  const nearbyJobs = jobsWithDistance
+    .filter((job) => job.distanceKm <= 60)
+    .slice(0, 12);
 
+  const selectedJob = nearbyJobs[0] ?? jobsWithDistance[0] ?? null;
   const mapUrl = selectedJob ? buildGoogleEmbedUrl(selectedJob, userLocation) : null;
 
   const requestLocation = () => {
@@ -76,10 +83,7 @@ export function NearbyMap() {
         setLocationState("ready");
       },
       () => setLocationState("error"),
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-      }
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
@@ -125,7 +129,10 @@ export function NearbyMap() {
 
         <div className="space-y-3">
           {(nearbyJobs.length ? nearbyJobs : jobsWithDistance.slice(0, 8)).map((job) => (
-            <article key={job.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <article
+              key={job.id}
+              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-semibold text-slate-900">{job.title}</h3>
@@ -148,12 +155,6 @@ export function NearbyMap() {
               </div>
             </article>
           ))}
-
-          {locationState === "ready" && jobsWithDistance.length === 0 && (
-            <p className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500">
-              Inga jobb med koordinater hittades ännu.
-            </p>
-          )}
         </div>
       </div>
     </div>
