@@ -6,7 +6,7 @@ import { mockUser } from "@/lib/mock-user";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
 import { ProfileBubble } from "./profile-bubble";
-import { JobDetailModal } from "./job-detail-modal";
+import { JobDetailModal } from "@/components/jobs/job-detail-modal";
 import { Job } from "@/types/job";
 
 type MatchBubbleNode = Job & {
@@ -292,7 +292,6 @@ export function ForYouCanvas() {
 
       <JobDetailModal
         job={selectedJob}
-        open={Boolean(selectedJob)}
         onClose={() => setSelectedJobId(null)}
       />
     </div>
