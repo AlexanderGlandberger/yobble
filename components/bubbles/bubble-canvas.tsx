@@ -392,6 +392,7 @@ export function BubbleCanvas() {
   }, [activeTab, searchQuery, cityQuery]);
 
   const nodes = useMemo(() => buildPackedCluster(filteredJobs), [filteredJobs]);
+  const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
     <div className="space-y-4">
