@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 import { Job } from "@/types/job";
-import { categoryLabels, categoryStyles } from "@/lib/categories";
+import { categoryStyles } from "@/lib/categories";
 
 const sizeStyles: { [K in Job["size"]]: string } = {
   xs: "h-[108px] w-[108px] p-3",
@@ -18,15 +18,23 @@ type BubbleCardProps = {
   isSelected?: boolean;
   onClick?: () => void;
   style?: React.CSSProperties;
+  initialStyle?: React.CSSProperties;
+  animateStyle?: React.CSSProperties;
+  transition?: {
+    duration?: number;
+    delay?: number;
+    ease?: "linear" | "easeIn" | "easeOut" | "easeInOut";
+  };
 };
 
 function renderBubbleContent(job: Job) {
   if (job.size === "xs" || job.size === "sm") {
     return (
-      <div className="flex h-full w-full items-center justify-center px-3 text-center">
+      <div className="flex h-full w-full flex-col items-center justify-center px-3 text-center">
         <p className="line-clamp-3 break-words text-sm font-semibold leading-tight">
           {job.title}
         </p>
+        <p className="mt-1 line-clamp-1 text-xs opacity-80">{job.location}</p>
       </div>
     );
   }
@@ -40,6 +48,7 @@ function renderBubbleContent(job: Job) {
         <p className="mt-2 line-clamp-1 text-sm opacity-80">
           {job.company}
         </p>
+        <p className="mt-1 line-clamp-1 text-xs opacity-75">{job.location}</p>
       </div>
     );
   }
@@ -55,7 +64,6 @@ function renderBubbleContent(job: Job) {
       </p>
 
       <div className="mt-5 text-[clamp(11px,0.9vw,14px)] opacity-75">
-        <p className="line-clamp-1">{categoryLabels[job.category]}</p>
         <p className="line-clamp-1">{job.location}</p>
       </div>
     </div>
@@ -67,16 +75,26 @@ export function BubbleCard({
   isSelected = false,
   onClick,
   style,
+  initialStyle,
+  animateStyle,
+  transition,
 }: BubbleCardProps) {
   return (
-    <div className="absolute" style={style}>
+    <motion.div
+      className="absolute"
+      style={style}
+      initial={initialStyle}
+      animate={animateStyle}
+      transition={transition}
+    >
       <motion.button
+        type="button"
         whileHover={{ scale: 1 }}
         whileTap={{ scale: 0.985 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         onClick={onClick}
         className={clsx(
-          "flex -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border text-center shadow-sm",
+          "flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center overflow-hidden rounded-full border text-center shadow-sm",
           "bg-gradient-to-br from-white via-white to-white/90",
           sizeStyles[job.size],
           categoryStyles[job.category],
@@ -85,6 +103,6 @@ export function BubbleCard({
       >
         {renderBubbleContent(job)}
       </motion.button>
-    </div>
+    </motion.div>
   );
 }
