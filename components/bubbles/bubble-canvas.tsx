@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { mockJobs } from "@/lib/mock-jobs";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
 import { CategoryTabs } from "./category-tabs";
+import { JobDetailModal } from "@/components/jobs/job-detail-modal";
 import { Job, CategoryTab } from "@/types/job";
 
 type BubbleNode = Job & {
@@ -348,7 +349,7 @@ function getCuratedAllCategoryJobs(jobs: Job[]) {
 }
 
 export function BubbleCanvas() {
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [activeTab, setActiveTab] = useState<CategoryTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [cityQuery, setCityQuery] = useState("");
@@ -390,10 +391,6 @@ export function BubbleCanvas() {
     );
   }, [activeTab, searchQuery, cityQuery]);
 
-  useEffect(() => {
-    setSelectedJobId(null);
-  }, [activeTab, searchQuery, cityQuery]);
-
   const nodes = useMemo(() => buildPackedCluster(filteredJobs), [filteredJobs]);
 
   return (
@@ -430,8 +427,8 @@ export function BubbleCanvas() {
               <BubbleCard
                 key={job.id}
                 job={job}
-                isSelected={selectedJobId === job.id}
-                onClick={() => setSelectedJobId(job.id)}
+                isSelected={selectedJob?.id === job.id}
+                onClick={() => setSelectedJob(job)}
                 style={{
                   left: job.px,
                   top: job.py,
@@ -441,6 +438,11 @@ export function BubbleCanvas() {
           </div>
         </div>
       </div>
+
+      <JobDetailModal
+        job={selectedJob}
+        onClose={() => setSelectedJob(null)}
+      />
     </div>
   );
 }
