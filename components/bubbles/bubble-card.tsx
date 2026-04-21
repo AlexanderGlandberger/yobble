@@ -28,43 +28,53 @@ type BubbleCardProps = {
 };
 
 function renderBubbleContent(job: Job) {
+  const titleFade =
+    "line-clamp-3 break-words [mask-image:linear-gradient(to_bottom,#000_72%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,#000_72%,transparent)]";
+  const lineFade =
+    "line-clamp-1 max-w-full [mask-image:linear-gradient(to_right,#000_82%,transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_82%,transparent)]";
+
   if (job.size === "xs" || job.size === "sm") {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center px-3 text-center">
-        <p className="line-clamp-3 break-words text-sm font-semibold leading-tight">
+      <div className="flex h-full w-full flex-col items-center justify-center px-4 py-2 text-center">
+        <p className={clsx("text-sm font-semibold leading-tight", titleFade)}>
           {job.title}
         </p>
-        <p className="mt-1 line-clamp-1 text-xs opacity-80">{job.location}</p>
+        <p className={clsx("mt-2 text-xs opacity-80", lineFade)}>{job.location}</p>
       </div>
     );
   }
 
   if (job.size === "md") {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center px-4 text-center">
-        <p className="line-clamp-3 break-words text-base font-semibold leading-tight">
+      <div className="flex h-full w-full flex-col items-center justify-center px-5 py-3 text-center">
+        <p className={clsx("text-base font-semibold leading-tight", titleFade)}>
           {job.title}
         </p>
-        <p className="mt-2 line-clamp-1 text-sm opacity-80">
+        <p className={clsx("mt-3 text-sm opacity-80", lineFade)}>
           {job.company}
         </p>
-        <p className="mt-1 line-clamp-1 text-xs opacity-75">{job.location}</p>
+        <p className={clsx("mt-2 text-xs opacity-75", lineFade)}>{job.location}</p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center px-5 text-center">
-      <p className="line-clamp-3 break-words text-[clamp(16px,1.6vw,22px)] font-semibold leading-tight">
+    <div className="flex h-full w-full flex-col items-center justify-center px-6 py-4 text-center">
+      <p
+        className={clsx(
+          "text-[clamp(16px,1.6vw,22px)] font-semibold leading-tight",
+          titleFade
+        )}
+      >
         {job.title}
       </p>
 
-      <p className="mt-2 line-clamp-1 text-[clamp(13px,1vw,16px)] opacity-85">
+      <p className={clsx("mt-3 text-[clamp(13px,1vw,16px)] opacity-85", lineFade)}>
         {job.company}
       </p>
 
-      <div className="mt-5 text-[clamp(11px,0.9vw,14px)] opacity-75">
-        <p className="line-clamp-1">{job.location}</p>
+      <div className="mt-4 max-w-full text-[clamp(11px,0.9vw,14px)] opacity-75">
+        <p className={lineFade}>{job.location}</p>
       </div>
     </div>
   );
