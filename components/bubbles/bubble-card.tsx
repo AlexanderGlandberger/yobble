@@ -88,12 +88,13 @@ export function BubbleCard({
       transition={transition}
     >
       <motion.button
+        type="button"
         whileHover={{ scale: 1 }}
         whileTap={{ scale: 0.985 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         onClick={onClick}
         className={clsx(
-          "flex -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border text-center shadow-sm",
+          "flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center overflow-hidden rounded-full border text-center shadow-sm",
           "bg-gradient-to-br from-white via-white to-white/90",
           sizeStyles[job.size],
           categoryStyles[job.category],
