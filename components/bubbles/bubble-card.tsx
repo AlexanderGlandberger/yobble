@@ -28,9 +28,9 @@ type BubbleCardProps = {
 };
 
 function renderBubbleContent(job: Job) {
-  const contentFrame = "mx-auto w-full max-w-[84%]";
+  const contentFrame = "mx-auto w-full max-w-[92%]";
   const lineFade =
-    "max-w-full overflow-hidden whitespace-nowrap pr-4 [mask-image:linear-gradient(to_right,#000_82%,transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_82%,transparent)]";
+    "max-w-full overflow-hidden whitespace-nowrap pr-1 [mask-image:linear-gradient(to_right,#000_93%,transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_93%,transparent)]";
 
   if (job.size === "xs" || job.size === "sm") {
     return (
