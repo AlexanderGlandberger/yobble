@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { LayoutGroup } from "framer-motion";
 import { mockJobs } from "@/lib/mock-jobs";
 import { getMatchScore } from "@/lib/match";
 import { BubbleCard } from "./bubble-card";
@@ -395,55 +396,59 @@ export function BubbleCanvas() {
   const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
-    <div className="space-y-4">
-      <CategoryTabs activeTab={activeTab} onChange={setActiveTab} />
+    <LayoutGroup id="jobs-bubble-layout">
+      <div className="space-y-4">
+        <CategoryTabs activeTab={activeTab} onChange={setActiveTab} />
 
-      <div className="grid gap-3 md:grid-cols-[1fr_280px]">
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Sök jobb, företag eller plats"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
-          />
-        </div>
+        <div className="grid gap-3 md:grid-cols-[1fr_280px]">
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Sök jobb, företag eller plats"
+              className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+            />
+          </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-          <input
-            value={cityQuery}
-            onChange={(e) => setCityQuery(e.target.value)}
-            placeholder="Filtrera stad"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
-          />
-        </div>
-      </div>
-
-      <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
-        <div className="overflow-x-auto">
-          <div
-            className="relative mx-auto overflow-hidden rounded-[28px]"
-            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-          >
-            {nodes.map((job) => (
-              <BubbleCard
-                key={job.id}
-                job={job}
-                isSelected={selectedJob?.id === job.id}
-                onClick={() => setSelectedJob(job)}
-                style={{
-                  left: job.px,
-                  top: job.py,
-                }}
-              />
-            ))}
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+            <input
+              value={cityQuery}
+              onChange={(e) => setCityQuery(e.target.value)}
+              placeholder="Filtrera stad"
+              className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
+            />
           </div>
         </div>
-      </div>
 
-      <JobDetailModal
-        job={selectedJob}
-        onClose={() => setSelectedJob(null)}
-      />
-    </div>
+        <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
+          <div className="overflow-x-auto">
+            <div
+              className="relative mx-auto overflow-hidden rounded-[28px]"
+              style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
+            >
+              {nodes.map((job) => (
+                <BubbleCard
+                  key={job.id}
+                  job={job}
+                  layoutId={`job-bubble-${job.id}`}
+                  isSelected={selectedJob?.id === job.id}
+                  onClick={() => setSelectedJob(job)}
+                  style={{
+                    left: job.px,
+                    top: job.py,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <JobDetailModal
+          job={selectedJob}
+          layoutId={selectedJob ? `job-bubble-${selectedJob.id}` : undefined}
+          onClose={() => setSelectedJob(null)}
+        />
+      </div>
+    </LayoutGroup>
   );
 }

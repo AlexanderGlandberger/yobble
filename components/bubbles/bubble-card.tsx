@@ -15,6 +15,7 @@ const sizeStyles: { [K in Job["size"]]: string } = {
 
 type BubbleCardProps = {
   job: Job;
+  layoutId?: string;
   isSelected?: boolean;
   onClick?: () => void;
   style?: React.CSSProperties;
@@ -92,6 +93,7 @@ function renderBubbleContent(job: Job) {
 
 export function BubbleCard({
   job,
+  layoutId,
   isSelected = false,
   onClick,
   style,
@@ -108,6 +110,7 @@ export function BubbleCard({
       transition={transition}
     >
       <motion.button
+        layoutId={layoutId}
         type="button"
         whileHover={{ scale: 1 }}
         whileTap={{ scale: 0.985 }}

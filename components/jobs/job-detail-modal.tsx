@@ -1,11 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Job } from "@/types/job";
 
 type JobDetailModalProps = {
   job: Job | null;
+  layoutId?: string;
   onClose: () => void;
 };
 
@@ -15,7 +17,18 @@ function scoreTone(score: number) {
   return "text-amber-700 bg-amber-50 border-amber-200";
 }
 
-export function JobDetailModal({ job, onClose }: JobDetailModalProps) {
+export function JobDetailModal({ job, layoutId, onClose }: JobDetailModalProps) {
+  useEffect(() => {
+    if (!job) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [job, onClose]);
+
   return (
     <AnimatePresence>
       {job && (
@@ -24,20 +37,23 @@ export function JobDetailModal({ job, onClose }: JobDetailModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
         >
-          <button
+          <motion.button
             aria-label="Close modal backdrop"
             onClick={onClose}
             className="absolute inset-0 bg-slate-900/45 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 6 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative z-10 w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl md:p-7"
+            layoutId={layoutId}
+            transition={{ layout: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
+            className="relative z-10 w-full max-w-2xl rounded-[32px] border border-slate-200 bg-white/95 p-6 shadow-2xl md:p-7"
+            onClick={(event) => event.stopPropagation()}
           >
             <button
               onClick={onClose}
@@ -47,7 +63,13 @@ export function JobDetailModal({ job, onClose }: JobDetailModalProps) {
               <X className="h-4 w-4" />
             </button>
 
-            <div className="space-y-5">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.22, delay: 0.12, ease: "easeOut" }}
+              className="space-y-5"
+            >
               <header className="pr-10">
                 <h2 className="text-2xl font-semibold text-slate-900">{job.title}</h2>
                 <p className="mt-1 text-sm text-slate-600">
@@ -120,7 +142,7 @@ export function JobDetailModal({ job, onClose }: JobDetailModalProps) {
                   Jämför
                 </button>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       )}
