@@ -25,13 +25,19 @@ export const categoryLabels: Record<CategoryTab, string> = {
 };
 
 export const categoryStyles: Record<JobCategory, string> = {
-  tech: "border-blue-200 bg-blue-100/70 text-blue-700",
-  sales_marketing: "border-emerald-200 bg-emerald-100/70 text-emerald-700",
-  healthcare: "border-rose-200 bg-rose-100/70 text-rose-700",
-  design: "border-violet-200 bg-violet-100/70 text-violet-700",
-  finance_admin: "border-slate-300 bg-slate-100/70 text-slate-700",
-  industry: "border-amber-300 bg-amber-100/70 text-amber-700",
-  service: "border-cyan-200 bg-cyan-100/70 text-cyan-700",
+  tech: "border-blue-300/70 bg-gradient-to-br from-blue-100/80 via-sky-50/80 to-indigo-100/70 text-blue-800 shadow-blue-200/70",
+  sales_marketing:
+    "border-emerald-300/70 bg-gradient-to-br from-emerald-100/80 via-lime-50/80 to-green-100/70 text-emerald-800 shadow-emerald-200/70",
+  healthcare:
+    "border-rose-300/70 bg-gradient-to-br from-rose-100/80 via-pink-50/80 to-red-100/70 text-rose-800 shadow-rose-200/70",
+  design:
+    "border-violet-300/70 bg-gradient-to-br from-violet-100/80 via-fuchsia-50/80 to-purple-100/70 text-violet-800 shadow-violet-200/70",
+  finance_admin:
+    "border-slate-300/80 bg-gradient-to-br from-slate-100/80 via-zinc-50/80 to-slate-200/70 text-slate-800 shadow-slate-200/70",
+  industry:
+    "border-amber-300/75 bg-gradient-to-br from-amber-100/80 via-orange-50/80 to-yellow-100/70 text-amber-800 shadow-amber-200/70",
+  service:
+    "border-cyan-300/75 bg-gradient-to-br from-cyan-100/80 via-sky-50/80 to-teal-100/70 text-cyan-800 shadow-cyan-200/70",
 };
 
 export const categoryIcons: Record<
