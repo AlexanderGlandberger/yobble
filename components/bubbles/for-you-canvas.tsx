@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { LayoutGroup } from "framer-motion";
 import { mockJobs } from "@/lib/mock-jobs";
 import { mockUser } from "@/lib/mock-user";
 import { getMatchScore } from "@/lib/match";
@@ -245,55 +246,59 @@ export function ForYouCanvas() {
   const selectedJob = nodes.find((job) => job.id === selectedJobId) ?? null;
 
   return (
-    <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
-      <p className="mb-2 px-2 text-xs text-slate-500">
-        Jobs with 85%+ match are magnetized closest to your profile bubble.
-      </p>
-      <div className="overflow-x-auto">
-        <div
-          className="relative mx-auto overflow-hidden rounded-[28px]"
-          style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-        >
-          <ProfileBubble
-            name="Alexander"
-            title={mockUser.title}
-            location={mockUser.location}
-          />
-
-          {nodes.map((job) => (
-            <BubbleCard
-              key={job.id}
-              job={job}
-              isSelected={selectedJobId === job.id}
-              onClick={() => setSelectedJobId(job.id)}
-              style={{
-                left: job.px,
-                top: job.py,
-              }}
-              initialStyle={{
-                left: job.spawnX,
-                top: job.spawnY,
-                opacity: 0,
-              }}
-              animateStyle={{
-                left: job.px,
-                top: job.py,
-                opacity: 1,
-              }}
-              transition={{
-                duration: 0.55 + (100 - job.matchScore) / 120,
-                delay: (100 - job.matchScore) / 500,
-                ease: "easeOut",
-              }}
+    <LayoutGroup id="for-you-bubble-layout">
+      <div className="rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-4">
+        <p className="mb-2 px-2 text-xs text-slate-500">
+          Jobs with 85%+ match are magnetized closest to your profile bubble.
+        </p>
+        <div className="overflow-x-auto">
+          <div
+            className="relative mx-auto overflow-hidden rounded-[28px]"
+            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
+          >
+            <ProfileBubble
+              name="Alexander"
+              title={mockUser.title}
+              location={mockUser.location}
             />
-          ))}
-        </div>
-      </div>
 
-      <JobDetailModal
-        job={selectedJob}
-        onClose={() => setSelectedJobId(null)}
-      />
-    </div>
+            {nodes.map((job) => (
+              <BubbleCard
+                key={job.id}
+                job={job}
+                layoutId={`for-you-bubble-${job.id}`}
+                isSelected={selectedJobId === job.id}
+                onClick={() => setSelectedJobId(job.id)}
+                style={{
+                  left: job.px,
+                  top: job.py,
+                }}
+                initialStyle={{
+                  left: job.spawnX,
+                  top: job.spawnY,
+                  opacity: 0,
+                }}
+                animateStyle={{
+                  left: job.px,
+                  top: job.py,
+                  opacity: 1,
+                }}
+                transition={{
+                  duration: 0.55 + (100 - job.matchScore) / 120,
+                  delay: (100 - job.matchScore) / 500,
+                  ease: "easeOut",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+  
+        <JobDetailModal
+          job={selectedJob}
+          layoutId={selectedJob ? `for-you-bubble-${selectedJob.id}` : undefined}
+          onClose={() => setSelectedJobId(null)}
+        />
+      </div>
+    </LayoutGroup>
   );
 }
