@@ -350,7 +350,7 @@ function getCuratedAllCategoryJobs(jobs: Job[]) {
 }
 
 export function BubbleCanvas() {
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [activeJob, setActiveJob] = useState<Job | null>(null);
   const [activeTab, setActiveTab] = useState<CategoryTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [cityQuery, setCityQuery] = useState("");
@@ -434,8 +434,8 @@ export function BubbleCanvas() {
                   key={job.id}
                   job={job}
                   layoutId={`job-bubble-${job.id}`}
-                  isSelected={selectedJob?.id === job.id}
-                  onClick={() => setSelectedJob(job)}
+                  isSelected={activeJob?.id === job.id}
+                  onClick={() => setActiveJob(job)}
                   style={{
                     left: job.px,
                     top: job.py,
@@ -447,9 +447,9 @@ export function BubbleCanvas() {
         </div>
 
         <JobDetailModal
-          job={selectedJob}
-          layoutId={selectedJob ? `job-bubble-${selectedJob.id}` : undefined}
-          onClose={() => setSelectedJob(null)}
+          job={activeJob}
+          layoutId={activeJob ? `job-bubble-${activeJob.id}` : undefined}
+          onClose={() => setActiveJob(null)}
         />
       </div>
     </LayoutGroup>
